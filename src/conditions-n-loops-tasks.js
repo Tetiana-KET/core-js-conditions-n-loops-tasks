@@ -509,11 +509,60 @@ function shuffleChar(str, iterations) {
  *
  * @param {number} number The source number
  * @returns {number} The nearest larger number, or original number if none exists.
+ * if number less than 10, there is no sence in a function, just return number
+ * create an array to store digits of num
+ * convert a number to an array of digits
+ * we should start before last element - initialize i equal to the before-last index
+ 
+ * Find the first pair of adjacent digits from right to left where digits[i] < digits[i + 1] - for this - 
+ * go from end to start and compare while i >= 0 and digits[i] >= digits[i + 1] - decrement i
+ * digits[i] >= digits[i + 1] *- this checks that the oeder is still ascending
+ * 
+ * If no such pair is found, it means, that all digits are in an ascending order
+ * the number is already the largest possible
+ * in this case i equals -1 return num 
+ * 
+ * to find a value, which will be swapped -
+ * it should be the smallest digit to the right of digits[i] that is larger than digits[i]
+ * create and initialize J equals to the last index
+ * while digits[j-last] <= digits[i - beforeLast] - decrement J
+ * 
+ * Swap digits[i] and digits[j]
+ * Reverse the subarray to the right of digits[i], that part starts with index i+1
+ * Convert the array of digits back to a number and return it
  */
-function getNearestBigger(/* number */) {
-  throw new Error('Not implemented');
-}
+function getNearestBigger(number) {
+  if (number < 10) return number;
+  const numberArr = Array.from(String(number), (el) => Number(el));
+  let i = numberArr.length - 2;
 
+  while (i >= 0 && numberArr[i] >= numberArr[i + 1]) {
+    i -= 1;
+  }
+
+  if (i === -1) return number;
+
+  let j = numberArr.length - 1;
+  while (numberArr[j] <= numberArr[i]) {
+    j -= 1;
+  }
+  const temp = numberArr[i];
+  numberArr[i] = numberArr[j];
+  numberArr[j] = temp;
+
+  let left = i + 1;
+  let right = numberArr.length - 1;
+
+  while (left < right) {
+    const temp2 = numberArr[left];
+    numberArr[left] = numberArr[right];
+    numberArr[right] = temp2;
+    left += 1;
+    right -= 1;
+  }
+
+  return parseInt(numberArr.join(''), 10);
+}
 module.exports = {
   isPositive,
   getMaxNumber,
